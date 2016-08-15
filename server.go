@@ -43,6 +43,12 @@ func main() {
 		log.Fatal("error occurs on connect postgres", errSQLOpen)
 	}
 	defer db.Close()
+	router := CreateRouter()
+	log.Fatal(http.ListenAndServe(port, router))
+}
+
+// CreateRouter ...
+func CreateRouter() *httprouter.Router {
 	router := httprouter.New()
 	router.GET("/", Index)
 	router.GET("/healthz", HealthCheck)
@@ -53,7 +59,7 @@ func main() {
 	router.POST("/dishes", CreateDish)
 	router.PUT("/dishes/:id", UpdateDish)
 	router.DELETE("/dishes/:id", DeleteDish)
-	log.Fatal(http.ListenAndServe(port, router))
+	return router
 }
 
 // Index is welcome page
