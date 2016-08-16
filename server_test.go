@@ -9,14 +9,12 @@ import (
 )
 
 var (
-	server     *httptest.Server
-	reader     io.Reader
-	healthzURL string
+	server *httptest.Server
+	reader io.Reader
 )
 
 func init() {
 	server = httptest.NewServer(CreateRouter())
-	healthzURL = fmt.Sprintf("%s/healthz", server.URL)
 }
 
 func TestIndex(t *testing.T) {
@@ -30,8 +28,9 @@ func TestIndex(t *testing.T) {
 }
 
 func TestHealthCheck(t *testing.T) {
+	healthzURL := fmt.Sprintf("%s/healthz", server.URL)
 	res, _ := http.Get(healthzURL)
-	if res.StatusCode != 200 {
+	if res.StatusCode != http.StatusOK {
 		t.Errorf("fail %d", res.StatusCode)
 	}
 	expected := "no-cache, no-store, must-revalidate"
@@ -52,3 +51,17 @@ func TestHealthCheck(t *testing.T) {
 		t.Errorf("we expected %s but got %s", expected, header)
 	}
 }
+
+// func TestGetDishes(t *testing.T) {
+// 	getDishesURL := fmt.Sprintf("%s/dishes", server.URL)
+// 	expectedContentType := "application/json"
+// 	res, _ := http.Get(getDishesURL)
+// 	if res.StatusCode != http.StatusOK {
+// 		t.Errorf("expected StatusCode is %d, but we got %d", http.StatusOK, res.StatusCode)
+// 	}
+
+// 	resContentType := res.Header.Get("Content-Type")
+// 	if resContentType != expectedContentType {
+// 		t.Errorf("expected content type is %s, but we got %s", expectedContentType, resContentType)
+// 	}
+// }
