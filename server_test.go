@@ -13,8 +13,32 @@ var (
 	reader io.Reader
 )
 
+type FakeDAL struct{}
+
+func (dal FakeDAL) FindDishes() []Dish {
+	dishes := []Dish{}
+	return dishes
+}
+
+func (dal FakeDAL) GetDishByID(id string) Dish {
+	return Dish{}
+}
+
+func (dal FakeDAL) CreateDish(d *Dish) error {
+	return nil
+}
+
+func (dal FakeDAL) DeleteDishByID(id string) error {
+	return nil
+}
+
+func (dal FakeDAL) UpdateDish(d *Dish) error {
+	return nil
+}
+
 func init() {
-	server = httptest.NewServer(CreateRouter())
+	fakeDAL := FakeDAL{}
+	server = httptest.NewServer(CreateRouter(fakeDAL))
 }
 
 func TestIndex(t *testing.T) {

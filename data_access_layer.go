@@ -11,6 +11,9 @@ import (
 type DataAccessLayer interface {
 	FindDishes() []Dish
 	GetDishByID(string) Dish
+	CreateDish(*Dish) error
+	DeleteDishByID(string) error
+	UpdateDish(*Dish) error
 }
 
 // DAL ...
@@ -61,6 +64,35 @@ func (dal DAL) GetDishByID(dishID string) Dish {
 		Description: description,
 		Price:       price,
 	}
+}
+
+// CreateDish ...
+func (dal DAL) CreateDish(dish *Dish) error {
+	_, err := dal.db.
+		Exec(`INSERT INTO dish (name, description, price, id) VALUES($1, $2, $3, $4)`,
+			dish.Name,
+			dish.Description,
+			dish.Price,
+			dish.ID,
+		)
+	return err
+}
+
+// UpdateDish ...
+func (dal DAL) UpdateDish(dish *Dish) error {
+	_, err := dal.db.Exec(`UPDATE dish SET (name, description, price) = ($1, $2, $3) WHERE id = $4`,
+		dish.Name,
+		dish.Description,
+		dish.Price,
+		dish.ID,
+	)
+	return err
+}
+
+// DeleteDishByID ...
+func (dal DAL) DeleteDishByID(id string) error {
+	_, err := dal.db.Exec(`DELETE FROM dish WHERE id=$1`, id)
+	return err
 }
 
 // NewDAL ...
